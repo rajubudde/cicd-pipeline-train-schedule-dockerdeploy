@@ -16,7 +16,7 @@ pipeline {
                 script {
                     app = docker.build("ncodeitdocker/train-schedule")
                     app.inside {
-                        sh 'echo $(curl localhost:8080)'
+                        sh 'echo $(curl localhost:8181)'
                     }
                 }
             }
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 input 'Deploy to Production?'
                 milestone(1)
-                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'ncodeitadm', passwordVariable: 'ncodeit123')]) {
                     script {
                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker pull ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
                         try {
@@ -50,7 +50,7 @@ pipeline {
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        //sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8085:8080 -d ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8085:8080 -d ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
