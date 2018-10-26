@@ -1,4 +1,3 @@
-#Containers
 pipeline {
     agent any
     stages {
