@@ -16,7 +16,7 @@ pipeline {
                 script {
                     app = docker.build("ncodeitdocker/train-schedule")
                     app.inside {
-                        sh 'echo $(curl http://54.255.171.47:8081)'
+                        sh 'echo $(curl http://13.229.51.166:8081)'
                     }
                 }
             }
@@ -27,7 +27,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhublogin9') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 input 'Deploy to Production?'
                 milestone(1)
-                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'webserverlogin9', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     script {
                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker pull ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
                         try {
@@ -50,7 +50,7 @@ pipeline {
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8085:8080 -d ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name train-schedule -p 8089:8080 -d ncodeitdocker/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
