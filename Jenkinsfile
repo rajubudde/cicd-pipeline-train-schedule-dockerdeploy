@@ -16,7 +16,7 @@ pipeline {
                 script {
                     app = docker.build("ncodeitdocker/train-schedule")
                     app.inside {
-                        sh 'echo $(curl http://13.126.121.210:8081)'
+                        sh 'echo $(curl http://13.126.121.210:8080)'
                     }
                 }
             }
